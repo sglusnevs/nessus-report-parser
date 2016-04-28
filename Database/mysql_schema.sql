@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.14, for osx10.7 (x86_64)
+-- MySQL dump 10.14  Distrib 5.5.47-MariaDB, for Linux (x86_64)
 --
 -- Host: localhost    Database: reports
 -- ------------------------------------------------------
--- Server version	5.6.14
+-- Server version	5.5.47-MariaDB
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -14,6 +14,41 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `categories`
+--
+
+DROP TABLE IF EXISTS `categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `categoryID` int(11) unsigned NOT NULL DEFAULT '0',
+  `severity` enum('info','low','medium','high','critical') DEFAULT NULL,
+  `category_title_main` varchar(255) DEFAULT NULL,
+  `category_subtitle_main` varchar(255) DEFAULT NULL,
+  `category_solution_main` text,
+  `sort_order` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `category_plugin_link`
+--
+
+DROP TABLE IF EXISTS `category_plugin_link`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `category_plugin_link` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `pluginID` int(11) unsigned DEFAULT NULL,
+  `categoryID` char(4) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `pluginID` (`pluginID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `host_vuln_link`
@@ -30,18 +65,10 @@ CREATE TABLE `host_vuln_link` (
   `port` int(11) DEFAULT NULL,
   `protocol` varchar(32) DEFAULT NULL,
   `service` varchar(32) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`),
+  KEY `report_id` (`report_id`,`plugin_id`,`host_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=403749 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `host_vuln_link`
---
-
-LOCK TABLES `host_vuln_link` WRITE;
-/*!40000 ALTER TABLE `host_vuln_link` DISABLE KEYS */;
-/*!40000 ALTER TABLE `host_vuln_link` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `hosts`
@@ -59,19 +86,26 @@ CREATE TABLE `hosts` (
   `host_ip` varchar(30) DEFAULT NULL,
   `host_fqdn` varchar(64) DEFAULT NULL,
   `netbios_name` varchar(64) DEFAULT NULL,
-  `mac_address` varchar(64) DEFAULT NULL,
+  `mac_address` varchar(255) DEFAULT NULL,
+  `credentialed_scan` char(7) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1717 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `hosts`
+-- Table structure for table `ignored`
 --
 
-LOCK TABLES `hosts` WRITE;
-/*!40000 ALTER TABLE `hosts` DISABLE KEYS */;
-/*!40000 ALTER TABLE `hosts` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `ignored`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ignored` (
+  `plugin_id` int(11) unsigned DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  KEY `plugin_id` (`plugin_id`,`user_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `reports`
@@ -88,17 +122,24 @@ CREATE TABLE `reports` (
   `completed_hosts` int(11) DEFAULT NULL,
   `userId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `reports`
+-- Table structure for table `severities`
 --
 
-LOCK TABLES `reports` WRITE;
-/*!40000 ALTER TABLE `reports` DISABLE KEYS */;
-/*!40000 ALTER TABLE `reports` ENABLE KEYS */;
-UNLOCK TABLES;
+DROP TABLE IF EXISTS `severities`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `severities` (
+  `plugin_id` int(11) unsigned DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `severity` tinyint(2) DEFAULT NULL,
+  KEY `plugin_id` (`plugin_id`,`user_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `users`
@@ -117,18 +158,8 @@ CREATE TABLE `users` (
   `last_updated` datetime DEFAULT NULL,
   `severity` float DEFAULT '4',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'simon.beattie@randomstorm.com','3caf84e8248c5d086862d40bb2c37fe3578930cc763f036ca0fd1a84f61cec2651ae431ea8495f8984224b3dc62e463ec00a4fc259de49e47d60bcaa34652133',0,'Simon Beattie',8,'2014-06-13 23:56:24',4.4);
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `vulnerabilities`
@@ -150,18 +181,14 @@ CREATE TABLE `vulnerabilities` (
   `solution` text,
   `synopsis` text,
   `randomstormed` int(11) DEFAULT '0',
-  PRIMARY KEY (`pluginID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `category_id` int(11) DEFAULT NULL,
+  `cvss_base_score` float DEFAULT NULL,
+  `cvss_temporal_score` float DEFAULT NULL,
+  PRIMARY KEY (`pluginID`),
+  KEY `vulnerability` (`vulnerability`),
+  KEY `pluginID` (`pluginID`,`severity`)
+) ENGINE=InnoDB AUTO_INCREMENT=90543 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `vulnerabilities`
---
-
-LOCK TABLES `vulnerabilities` WRITE;
-/*!40000 ALTER TABLE `vulnerabilities` DISABLE KEYS */;
-/*!40000 ALTER TABLE `vulnerabilities` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -172,4 +199,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-06-13 23:57:55
+-- Dump completed on 2016-04-28 15:39:40
