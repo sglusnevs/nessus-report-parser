@@ -66,6 +66,7 @@ class Forms extends Files
             {
                 $toMerge = $toMerge . ' ' . $nessusDirectory . $this->decodeName($report);
             }
+            set_time_limit(0); // sgl
             $command = 'python ' . __DIR__ . '/merger.py ' . $this->decodeName($mergeResults[0]) . $this->rand_string(4) . '.merged ' . $_SESSION['userId'] . ' ' . $toMerge . ' 2>&1';
             exec($command, $output, $return);
             if ($return == 0)
