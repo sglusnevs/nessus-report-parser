@@ -13,6 +13,6 @@ return array(
         'hostname'  =>  'localhost',
         'database'  =>  'reports',
         'username'  =>  'reports',
-        'password'  =>  'Zhopa6Zhopa6Posmotri6NGK'
+        'password'  =>  'mypassword'
     )
 );
