@@ -1,0 +1,113 @@
+<?php
+/**
+ * nessus-report-parser -- cvss.phtml
+ * User: Simon Beattie
+ * Date: 11/06/2014
+ * Time: 12:23
+ */
+
+
+$rowCount = 0;
+
+$cell_template = '';
+
+$filename = 'Nessus';
+
+if ('html' == $reportFormat) {
+
+    $row_start = "  <tr>\n";
+    $row_end = "  </tr>\n";
+    $cell_start = "    <td>";
+    $cell_end = "</td>\n";
+    $cell_sep = '';
+
+    include(__DIR__ . '/../includes/nessusReportHeaderCSV.phtml');
+
+    echo "\n<h1>$reportHeader</h1>";
+    echo "\n<table border=0 cellpadding=0 cellspacing=0>\n\n";
+
+} else {
+
+    $row_start = '';
+    $row_end = "\r\n";
+    $cell_start = '';
+    $cell_end = '';
+    $cell_sep = "\t";
+
+    $app->response->headers->set('Content-Type', 'text/csv');
+
+    $app->response->headers->set('Content-Disposition', 'attachment; filename="'. $filename . '.csv"');
+
+    $app->response->headers->set('Cache-Control', 'must-revalidate');
+
+    $app->response->headers->set('Pragma', 'must-revalidate');
+
+    echo $reportHeader. $row_end. $row_end;
+}
+
+print($row_start .
+        $cell_start. NLS::get('cvss_score_sum'). $cell_end. $cell_sep.
+        $cell_start. NLS::get('cvss_score_max') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('host_ip') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('ip_long') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('host_fqdn') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('sys_type') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('credentialed_scan') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('operating_system') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('netbios_name') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('mac_address') . $cell_end. $cell_sep.
+      $row_end
+    );
+
+
+
+foreach ($reportData as $hostData) {
+
+    $rowCount++;
+
+    // fine-grain system type by operating system
+    if (preg_match('/Windows Server/i', $hostData['operating_system'])) {
+        $sys_type = 'server-windows';
+    } elseif (preg_match('/NetApp/i', $hostData['operating_system'])) {
+        $sys_type = 'server-storage';
+    } elseif (preg_match('/AIX|SCO|BSD/', $hostData['operating_system'])) {
+        $sys_type = 'server-unix';
+    } elseif (preg_match('/OS\/400/', $hostData['operating_system'])) {
+        $sys_type = 'server-mainframe';
+    } elseif (preg_match('/linux/i', $hostData['operating_system'])) {
+        $sys_type = 'general-purpose';
+    } else {
+        $sys_type = $hostData['system_type'];
+    }
+
+    // replace spaces and newlines with commas
+    $mac_address = preg_replace('/[\s\n\r]+/', ', ', $hostData['mac_address']);
+
+    $os = preg_replace('/[\n\r\t]+/', ' ', $hostData['operating_system']);
+    $creds = NLS::get($hostData['credentialed_scan']);
+
+    
+
+        print($row_start .
+                $cell_start. $hostData['cvss_score_sum'] . $cell_end. $cell_sep.
+                $cell_start. $hostData['cvss_score_max'] . $cell_end. $cell_sep.
+                $cell_start. htmlspecialchars($hostData['host_ip']) . $cell_end. $cell_sep.
+                $cell_start. ip2long($hostData['host_ip']) . $cell_end. $cell_sep.
+                $cell_start. htmlspecialchars($hostData['host_fqdn']) . $cell_end. $cell_sep.
+                $cell_start. $sys_type . $cell_end. $cell_sep.
+                $cell_start. $creds . $cell_end. $cell_sep.
+                $cell_start. htmlspecialchars($os) . $cell_end. $cell_sep.
+                $cell_start. htmlspecialchars($hostData['netbios_name']) . $cell_end. $cell_sep.
+                $cell_start. htmlspecialchars($mac_address) . $cell_end. $cell_sep.
+              $row_end
+            );
+}
+
+if ('html' == $reportFormat) {
+
+    echo "</table>";
+
+    include(__DIR__ . '/../includes/footer.phtml');
+}
+
+

@@ -1,0 +1,23 @@
+<?php
+/**
+ * nessus-report-parser -- reportHeader.phtml
+ * User: Simon Beattie
+ * Date: 12/06/2014
+ * Time: 16:23
+ */
+
+$path_csv = preg_replace('/html$/', 'csv', $_SERVER['REQUEST_URI']);
+echo '
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <link rel="stylesheet" type="text/css" href="/css/main.css">
+        <title>Report View</title>
+    </head>
+    <body>
+        <a class="myButton" href="/nessus">Return to Menu</a>
+        <a class="myButton" href="'. $path_csv. '">CSV</a></p>
+
+';
+
