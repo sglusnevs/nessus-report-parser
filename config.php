@@ -10,9 +10,9 @@ date_default_timezone_set('Europe/London');
 
 return array(
     'db' => array(
-        'hostname'  =>  '127.0.0.1',
+        'hostname'  =>  'localhost',
         'database'  =>  'reports',
-        'username'  =>  'root',
-        'password'  =>  'pa55word'
+        'username'  =>  'reports',
+        'password'  =>  'Zhopa6Zhopa6Posmotri6NGK'
     )
 );

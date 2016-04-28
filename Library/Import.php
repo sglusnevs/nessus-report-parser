@@ -53,6 +53,7 @@ class Import extends ReportsAbstract
 
     private function updateProgress()
     {
+        set_time_limit(30); // avoid timeout errors
         $updateProgress = $this->getPdo()->prepare('UPDATE reports SET completed_hosts =? WHERE id =?');
         $updated = $updateProgress->execute(array($this->completedHosts, $this->reportID));
         if (!$updated)
@@ -88,7 +89,7 @@ class Import extends ReportsAbstract
     {
         foreach ($properties as $tagItem) /* @var \SimpleXMLElement $tagItem */ {
 
-            $names = array('mac-address', 'system-type', 'operating-system', 'host-ip', 'host-fqdn', 'netbios-name');
+            $names = array('mac-address', 'system-type', 'operating-system', 'host-ip', 'host-fqdn', 'netbios-name', 'Credentialed_Scan'); // sgl
 
             $attribs = $tagItem->attributes();
             $name = $attribs['name'];
@@ -142,7 +143,9 @@ class Import extends ReportsAbstract
                 $item->risk_factor,
                 $item->see_also,
                 $item->solution,
-                $item->synopsis
+                $item->synopsis,
+                $item->cvss_base_score,
+                $item->cvss_temporal_score,
 
             );
 
@@ -158,7 +161,7 @@ class Import extends ReportsAbstract
             );
         }
 
-        $addVuln = $this->getPdo()->prepare('INSERT IGNORE INTO vulnerabilities (pluginID, vulnerability, svc_name, severity, pluginFamily, description, cve, risk_factor, see_also, solution, synopsis) VALUES'. implode(',', array_fill(0, count($vulnerabilities), '(?,?,?,?,?,?,?,?,?,?,?)')));
+        $addVuln = $this->getPdo()->prepare('INSERT IGNORE INTO vulnerabilities (pluginID, vulnerability, svc_name, severity, pluginFamily, description, cve, risk_factor, see_also, solution, synopsis, cvss_base_score, cvss_temporal_score) VALUES'. implode(',', array_fill(0, count($vulnerabilities), '(?,?,?,?,?,?,?,?,?,?,?,?,?)')));
         $addVulnLink = $this->getPdo()->prepare('INSERT INTO host_vuln_link (report_id, host_id, plugin_id, port, protocol, service) VALUES' . implode(',', array_fill(0, count($vulnerabilityLinks), '(?, ?, ?, ?, ?, ?)')));
 
         foreach ($vulnerabilities as $vulnerability)

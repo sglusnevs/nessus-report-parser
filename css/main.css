@@ -42,7 +42,7 @@ p {
 
 .reportFormContainer {
     position: relative;
-    width: 800px;
+    width: 1200px;
     margin: 0 auto;
 }
 
@@ -166,7 +166,7 @@ p {
 }
 
 .menu {
-    text-align: center;
+    text-align: left;
     color: black;
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", sans-serif;
     font-size: 12.0pt;
@@ -373,6 +373,7 @@ nav > ul > li > div {
     right: 0;
     top: 50px;
     visibility: hidden;
+    min-width: 190px;
 
     -webkit-transiton: opacity 0.2s;
     -moz-transition: opacity 0.2s;
@@ -393,6 +394,7 @@ nav > ul > li:hover > div {
 
 nav > ul > li > div ul > li {
     display: block;
+    white-space: nowrap;
 }
 
 nav > ul > li > div ul > li > a {

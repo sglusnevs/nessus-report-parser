@@ -566,4 +566,31 @@ class ReportData extends ReportsAbstract
 
         return $services;
     }
+
+    function getCvss($reportID, $type) 
+    { // Returns all data filtered by type and report ID
+
+        // $services = $this->loadXML(__DIR__ . '/../service-names-port-numbers.xml');
+
+        // Sanitize
+        switch ($type) {
+
+            case 'temporal': $score_type = 'cvss_temporal_score'; break;
+
+            default:
+            case 'base': $score_type = 'cvss_base_score'; break;
+        }
+
+        $getScores = $this->getPdo()->prepare("select host_name, system_type, operating_system, host_ip, host_fqdn, netbios_name, mac_address, credentialed_scan, floor(max($score_type)) as cvss_score_max, floor(sum($score_type)) as cvss_score_sum from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) left join vulnerabilities on (host_vuln_link.plugin_id = vulnerabilities.pluginID) where host_vuln_link.report_id = ?  group by hosts.id order by sum($score_type) desc");
+
+        $getScores->execute(array($reportID));
+
+        $scores = $getScores->fetchall(\PDO::FETCH_ASSOC);
+
+        if (!$scores) {
+            die('Sorry, we couldn\'t get the host score list: ' . $getScores->errorInfo()[2] . PHP_EOL);
+        }
+
+        return $scores;
+    }
 } 

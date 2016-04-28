@@ -142,3 +142,45 @@ $app->get('/xml', function() use($app, $reportData)
     echo '<pre>';
     print_r($xml);
 });
+
+$app->get('/categories/:reportId', function ($reportId) use($app, $reportData, $pdo)  // sgl
+{
+    $users = new \Library\Users($pdo);
+
+    //Sanitise
+    $reportId = strip_tags($reportId);
+
+    $userCheck = $users->checkReportOwnership($reportId, $_SESSION['userId']);
+    if (!$userCheck)
+    {
+        $app->render('reports/reportExists.phtml');
+    }
+    else
+    {
+        $data = $reportData->getPorts($reportId, '4.4', $_SESSION['userId']);
+        $app->render('reports/categories.phtml', array('reportData' => $data));
+    }
+});
+
+$app->get('/hosts_cvss/:reportType/:reportId/:reportFormat', function ($reportType, $reportId, $reportFormat) use($app, $reportData, $pdo)  // sgl
+{
+    $users = new \Library\Users($pdo);
+
+    //Sanitise
+    $reportId = strip_tags($reportId);
+
+    $reportHeader = NLS::get('report_type_'. $reportType);
+
+    $userCheck = $users->checkReportOwnership($reportId, $_SESSION['userId']);
+    if (!$userCheck)
+    {
+        $app->render('reports/reportExists.phtml');
+    }
+    else
+    {
+        $data = $reportData->getCvss($reportId, $reportType);
+
+        $app->render('reports/cvss.phtml', array('reportData' => $data, 'reportFormat' => $reportFormat, 'reportHeader' => $reportHeader, 'app' => $app));
+    }
+});
+

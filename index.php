@@ -7,10 +7,12 @@
  */
 
 include_once('Library/bootstrap.php');
+include_once('Library/Translations.php');
 
 $app = new \Slim\Slim(array(
     'templates.path' => './views'
 ));
+
 
 session_start();
 
