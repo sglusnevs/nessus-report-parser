@@ -1,0 +1,110 @@
+<?php
+/**
+ * nessus-report-parser - hidden.phtml.
+ * User: simonbeattie
+ * Date: 18/06/2014
+ * Time: 11:03
+ */
+
+include(__DIR__ . '/../includes/menuHeader.phtml');
+
+function severity2style($severity) {
+
+    $color = '';
+
+    switch ($severity) {
+
+        case 'info': $color = 'blue'; break;
+        case 'low': $color = 'green'; break;
+        case 'medium': $color = 'orange'; break;
+        case 'high': 
+        case 'critical': $color = 'red'; break;
+    }
+
+    if ($color) {
+
+        return ' style="color:'. $color. '" ';
+
+    } else {
+
+        return '';
+    }
+}
+
+$severity = $app->request()->get('result');
+$plugin = $app->request()->get('plugin');
+
+ /*
+ echo 'ZZZ<pre>'; print_r($categories); 
+ echo 'ZZZ<pre>'; print_r($vulnerabilities); die();
+ */
+
+echo '
+<p class="header">Change Plugin Category</p>
+';
+
+echo '
+<div class="vulnFormContainer">
+    <ul class="vulnForm">
+';
+
+foreach ($vulnerabilities as $vulnerability) {
+
+    if ($vulnerability['risk_factor'] == 'None')
+    {
+        $vulnerability['risk_factor'] = 'Informational';
+    }
+
+    if (($vulnerability['risk_factor'] == "High") || ($vulnerability['risk_factor'] == "Critical")) {
+        $colour = "red";
+    } elseif ($vulnerability['risk_factor'] == "Medium") {
+        $colour = "orange";
+    } elseif ($vulnerability['risk_factor'] == "Low") {
+        $colour = "green";
+    } elseif ($vulnerability['risk_factor'] == "None") {
+        $colour = "blue";
+    } else {
+        $colour = "blue";
+    }
+
+    echo'<li>';
+
+    if (array_key_exists($vulnerability['categories_public_id'], $categories)) {
+
+        $vulnerabilities_category_current = $categories[$vulnerability['categories_public_id']]['categories_subtitle_main'];
+        $vulnerabilities_severity_current = $categories[$vulnerability['categories_public_id']]['severity'];
+
+    } else {
+
+        $vulnerabilities_category_current = 'Informational';
+        $vulnerabilities_severity_current = 'info';
+    }
+
+    echo'
+        <form method="post">
+        <label class="' . $colour . '">' . htmlspecialchars($vulnerability['vulnerability']) . '</label>
+        <select '. severity2style($vulnerabilities_severity_current). ' name="categories_public_id">
+            <option '. severity2style($vulnerabilities_severity_current). ' selected="selected">'. $vulnerabilities_category_current .'</option>'. "\n";
+
+
+            foreach ($categories as $categories_public_id => $categories_data) {
+
+                echo '<option '. severity2style($categories_data['severity']). ' value ="'. $categories_public_id. '">'. $categories_data['categories_subtitle_main']. '</option>'. "\n";
+            }
+            echo '<option '. severity2style('info'). ' value ="null">Informational</option>'. "\n";
+
+        echo '
+        </select>
+    <input type="hidden" name="plugin" value="' . $vulnerability['pluginID'] . '">
+    <input type="submit" value="Update"></form>
+    ';
+}
+echo '
+        </li>
+                ';
+echo '</ul>
+</div>';
+
+
+
+include(__DIR__ . '/../includes/footer.phtml');

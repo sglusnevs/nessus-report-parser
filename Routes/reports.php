@@ -150,7 +150,7 @@ $app->get('/categorize/:reportType/:reportId/:reportFormat', function ($reportTy
     //Sanitise
     $reportId = strip_tags($reportId);
 
-    $reportHeader = NLS::get('report_type_'. $reportType);
+    $reportHeader = NLS::get('report_type_categorize_'. $reportType);
 
     $userCheck = $users->checkReportOwnership($reportId, $_SESSION['userId']);
     if (!$userCheck)
@@ -172,7 +172,7 @@ $app->get('/hosts_cvss/:reportType/:reportId/:reportFormat', function ($reportTy
     //Sanitise
     $reportId = strip_tags($reportId);
 
-    $reportHeader = NLS::get('report_type_'. $reportType);
+    $reportHeader = NLS::get('report_type_cvss_'. $reportType);
 
     $userCheck = $users->checkReportOwnership($reportId, $_SESSION['userId']);
     if (!$userCheck)

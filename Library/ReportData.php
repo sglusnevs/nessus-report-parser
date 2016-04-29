@@ -33,7 +33,7 @@ class ReportData extends ReportsAbstract
 
     function getAllVulnerabilities($userId)
     {
-        $getVulnerabilties = $this->getPdo()->prepare('SELECT pluginID, vulnerability, risk_factor, severity FROM vulnerabilities ORDER BY vulnerability');
+        $getVulnerabilties = $this->getPdo()->prepare('SELECT pluginID, vulnerability, risk_factor, severity, categories_public_id FROM vulnerabilities ORDER BY vulnerability');
         $getSeverityChanges = $this->getPdo()->prepare('SELECT plugin_id, severity FROM severities WHERE user_id =?');
 
         $vulnerabiltiesQuery = $getVulnerabilties->execute(array($userId));
@@ -575,13 +575,19 @@ class ReportData extends ReportsAbstract
         // Sanitize
         switch ($type) {
 
-            case 'temporal': $score_type = 'cvss_temporal_score'; break;
+            case 'temporal': $score_type = 'cvss_temporal_score'; $order = "sum($score_type) desc"; break;
 
-            default:
-            case 'base': $score_type = 'cvss_base_score'; break;
+            case 'base': $score_type = 'cvss_base_score'; $order = "sum($score_type) desc"; break;
+
+            case 'ip_temporal': $score_type = 'cvss_temporal_score'; $order = "host_ip"; break;
+
+            case 'ip_base': $score_type = 'cvss_base_score'; $order = "host_ip"; break;
+
         }
 
-        $getScores = $this->getPdo()->prepare("select host_name, system_type, operating_system, host_ip, host_fqdn, netbios_name, mac_address, credentialed_scan, floor(max($score_type)) as cvss_score_max, floor(sum($score_type)) as cvss_score_sum from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) left join vulnerabilities on (host_vuln_link.plugin_id = vulnerabilities.pluginID) where host_vuln_link.report_id = ?  group by hosts.id order by sum($score_type) desc");
+        $reportID = intval($reportID);
+
+        $getScores = $this->getPdo()->prepare("select host_name, system_type, operating_system, host_ip, host_fqdn, netbios_name, mac_address, credentialed_scan, floor(max($score_type)) as cvss_score_max, floor(sum($score_type)) as cvss_score_sum from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) left join vulnerabilities on (host_vuln_link.plugin_id = vulnerabilities.pluginID) where host_vuln_link.report_id = ?  group by hosts.id order by $order");
 
         $getScores->execute(array($reportID));
 
@@ -605,35 +611,64 @@ class ReportData extends ReportsAbstract
 
         $categories = $getCategories->fetchall(\PDO::FETCH_ASSOC);
 
+        $getHosts = $this->getPdo()->prepare("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = ? and host_vuln_link.plugin_id in(?) order by host_ip");
+
         if (!$categories) {
             die('Sorry, we couldn\'t get the categories list: ' . $getCategories->errorInfo()[2] . PHP_EOL);
         }
 
         foreach ($categories as $id => $category) {
 
+            $getHosts->execute(array($reportID, $category['plugin_ids_list']));
+
+            $hosts = $getHosts->fetchall(\PDO::FETCH_COLUMN);
+
+            if (!is_array($hosts)) {
+                die('Sorry, we couldn\'t get the host list: ' . $getHosts->errorInfo()[2] . PHP_EOL);
+            }
+
+            $category['hosts'] = $hosts;
+
             $result[] = $category;
         }
 
-        // $getHosts = $this->getPdo()->prepare("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(?) group by plugin_id order by host_ip");
+        return $result;
+    }
 
-        // $queryByCategory = sprintf("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(%s) group by plugin_id order by host_ip", $plugins_ids);
 
-        // $getScores = $this->getPdo()->prepare("select host_name, system_type, operating_system, host_ip, host_fqdn, netbios_name, mac_address, credentialed_scan, floor(max($score_type)) as cvss_score_max, floor(sum($score_type)) as cvss_score_sum from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) left join vulnerabilities on (host_vuln_link.plugin_id = vulnerabilities.pluginID) where host_vuln_link.report_id = ?  group by hosts.id order by sum($score_type) desc");
+    function getAllCategories()
+    { // Returns all data filtered by type and report ID
 
-        // $queryByCategory = sprintf("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(%s) group by plugin_id order by host_ip", $plugins_ids);
+        $result = false;
 
-        /*
-        $getScores->execute(array($reportID));
+        $getCategories = $this->getPdo()->prepare("select * from categories order by sort_order");
 
-        $scores = $getScores->fetchall(\PDO::FETCH_ASSOC);
+        $getCategories->execute();
 
-        if (!$scores) {
-            die('Sorry, we couldn\'t get the host score list: ' . $getScores->errorInfo()[2] . PHP_EOL);
+        $categories = $getCategories->fetchall(\PDO::FETCH_ASSOC);
+
+        if (!$categories) {
+            die('Sorry, we couldn\'t get the categories list: ' . $getCategories->errorInfo()[2] . PHP_EOL);
         }
 
-        return $scores;
-        */
+        foreach ($categories as $id => $category) {
+
+            $result[$category['categories_public_id']] = $category;
+        }
 
         return $result;
     }
+
+
+    function addVulnCategoryChange($pluginId, $categories_public_id)
+    {
+        $addVulnCategoryChange = $this->getPdo()->prepare('UPDATE vulnerabilities set categories_public_id = ? where pluginID = ?');
+        $changed = $addVulnCategoryChange->execute(array($categories_public_id, $pluginId));
+        if (!$changed)
+        {
+            die(print_r($addVulnCategoryChange->errorInfo()));
+        }
+        return $pluginId;
+    }
+
 } 

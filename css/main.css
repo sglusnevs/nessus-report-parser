@@ -47,9 +47,12 @@ p {
 }
 
 .vulnFormContainer {
-    position: relative;
-    width: 2000px;
+    width: 1600px;
     margin: 0 auto;
+}
+
+.vulnFormContainer select {
+    max-width: 350px;
 }
 
 .vulnForm li {
@@ -407,3 +410,4 @@ nav > ul > li > div ul > li > a {
 nav > ul > li > div ul > li:hover > a {
     background-color: rgba( 255, 255, 255, 0.1);
 }
+

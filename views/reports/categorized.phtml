@@ -7,8 +7,6 @@
  */
 
 
-echo 'ZZZZZ<pre>'; print_r($reportData); exit;
-
 $rowCount = 0;
 
 $cell_template = '';
@@ -22,6 +20,8 @@ if ('html' == $reportFormat) {
     $cell_start = "    <td>";
     $cell_end = "</td>\n";
     $cell_sep = '';
+    $ip_protector = '';
+    $sep_multiline = '<br />';
 
     include(__DIR__ . '/../includes/nessusReportHeaderCSV.phtml');
 
@@ -35,6 +35,8 @@ if ('html' == $reportFormat) {
     $cell_start = '';
     $cell_end = '';
     $cell_sep = "\t";
+    $ip_protector = " ";  // Excel trashes IPs by trying to convert 'em into something false recoznized; add " " sing in front for Excel to regard this as strings
+    $sep_multiline = ', ';
 
     $app->response->headers->set('Content-Type', 'text/csv');
 
@@ -44,20 +46,17 @@ if ('html' == $reportFormat) {
 
     $app->response->headers->set('Pragma', 'must-revalidate');
 
+    echo chr(0xef). chr(0xbb). chr(0xbf);
+
     echo $reportHeader. $row_end. $row_end;
 }
 
 print($row_start .
-        $cell_start. NLS::get('cvss_score_sum'). $cell_end. $cell_sep.
-        $cell_start. NLS::get('cvss_score_max') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('severity'). $cell_end. $cell_sep.
+        $cell_start. NLS::get('vuln_categories_title_main') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('vuln_categories_subtitle_main') . $cell_end. $cell_sep.
+        $cell_start. NLS::get('vuln_categories_solution_main') . $cell_end. $cell_sep.
         $cell_start. NLS::get('host_ip') . $cell_end. $cell_sep.
-        $cell_start. NLS::get('ip_long') . $cell_end. $cell_sep.
-        $cell_start. NLS::get('host_fqdn') . $cell_end. $cell_sep.
-        $cell_start. NLS::get('sys_type') . $cell_end. $cell_sep.
-        $cell_start. NLS::get('credentialed_scan') . $cell_end. $cell_sep.
-        $cell_start. NLS::get('operating_system') . $cell_end. $cell_sep.
-        $cell_start. NLS::get('netbios_name') . $cell_end. $cell_sep.
-        $cell_start. NLS::get('mac_address') . $cell_end. $cell_sep.
       $row_end
     );
 
@@ -65,42 +64,23 @@ print($row_start .
 
 foreach ($reportData as $hostData) {
 
-    $rowCount++;
+    global $import;
 
-    // fine-grain system type by operating system
-    if (preg_match('/Windows Server/i', $hostData['operating_system'])) {
-        $sys_type = 'server-windows';
-    } elseif (preg_match('/NetApp/i', $hostData['operating_system'])) {
-        $sys_type = 'server-storage';
-    } elseif (preg_match('/AIX|SCO|BSD/', $hostData['operating_system'])) {
-        $sys_type = 'server-unix';
-    } elseif (preg_match('/OS\/400/', $hostData['operating_system'])) {
-        $sys_type = 'server-mainframe';
-    } elseif (preg_match('/linux/i', $hostData['operating_system'])) {
-        $sys_type = 'general-purpose';
-    } else {
-        $sys_type = $hostData['system_type'];
+    for ($n = 0; $n < count($hostData['hosts']); $n++) {
+
+        $hostData['hosts'][$n] = $import->ipUnpad($hostData['hosts'][$n]);
     }
 
-    // replace spaces and newlines with commas
-    $mac_address = preg_replace('/[\s\n\r]+/', ', ', $hostData['mac_address']);
+    $hosts = join($sep_multiline, $hostData['hosts']);
 
-    $os = preg_replace('/[\n\r\t]+/', ' ', $hostData['operating_system']);
-    $creds = NLS::get($hostData['credentialed_scan']);
-
-    
+    $rowCount++;
 
         print($row_start .
-                $cell_start. $hostData['cvss_score_sum'] . $cell_end. $cell_sep.
-                $cell_start. $hostData['cvss_score_max'] . $cell_end. $cell_sep.
-                $cell_start. htmlspecialchars($hostData['host_ip']) . $cell_end. $cell_sep.
-                $cell_start. ip2long($hostData['host_ip']) . $cell_end. $cell_sep.
-                $cell_start. htmlspecialchars($hostData['host_fqdn']) . $cell_end. $cell_sep.
-                $cell_start. $sys_type . $cell_end. $cell_sep.
-                $cell_start. $creds . $cell_end. $cell_sep.
-                $cell_start. htmlspecialchars($os) . $cell_end. $cell_sep.
-                $cell_start. htmlspecialchars($hostData['netbios_name']) . $cell_end. $cell_sep.
-                $cell_start. htmlspecialchars($mac_address) . $cell_end. $cell_sep.
+                $cell_start. NLS::get($hostData['severity']) . $cell_end. $cell_sep.
+                $cell_start. $hostData['categories_title_main'] . $cell_end. $cell_sep.
+                $cell_start. $hostData['categories_subtitle_main'] . $cell_end. $cell_sep.
+                $cell_start. $hostData['categories_solution_main'] . $cell_end. $cell_sep.
+                $cell_start. $ip_protector. $hosts. $cell_end. $cell_sep.
               $row_end
             );
 }

@@ -35,6 +35,8 @@ echo '
                 <option selected> '. $label .' </option>
                 <option value="hosts_cvss/base/' . $report['id'] . '/html">Hosts Ranked by CVSS Base Score</option>
                 <option value="hosts_cvss/temporal/' . $report['id'] . '/html">Hosts Ranked by CVSS Temporal Score</option>
+                <option value="hosts_cvss/ip_base/' . $report['id'] . '/html">CVSS Base Score Ordered by Host IP</option>
+                <option value="hosts_cvss/ip_temporal/' . $report['id'] . '/html">CVSS Temporal Score Ordered by Host IP</option>
                 <option value="categorize/default/' . $report['id'] . '/html">Hosts by Vulnerability Category</option>
                 <option value="hosts/' . $report['id'] . '/' . $severity . '">Hosts Report</option>
                 <option value="vulnerabilities/' . $report['id'] . '/' . $severity . '">Vulnerabilities Report (Internals)</option>
