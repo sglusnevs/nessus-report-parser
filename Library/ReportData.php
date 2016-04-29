@@ -597,11 +597,25 @@ class ReportData extends ReportsAbstract
     function getCategorized($reportID, $type) 
     { // Returns all data filtered by type and report ID
 
-        // $services = $this->loadXML(__DIR__ . '/../service-names-port-numbers.xml');
+        $result = false;
 
-        $getCategories = $this->getPdo()->prepare("select severity, categories_title_main, categories_subtitle_main, categories_solution_main, group_concat(vulnerabilities.pluginID separator ',') as plugin_ids_list from categories left join vulnerabilities using (categories_public_id) where vulnerabilities.pluginID is not null order by sort_order");
+        $getCategories = $this->getPdo()->prepare("select categories.severity, categories_title_main, categories_subtitle_main, categories_solution_main, group_concat(vulnerabilities.pluginID separator ',') as plugin_ids_list from categories left join vulnerabilities using (categories_public_id) where vulnerabilities.pluginID is not null order by sort_order");
 
-        $getHosts = $this->getPdo()->prepare("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(?) group by plugin_id order by host_ip");
+        $getCategories->execute();
+
+        $categories = $getCategories->fetchall(\PDO::FETCH_ASSOC);
+
+        if (!$categories) {
+            die('Sorry, we couldn\'t get the categories list: ' . $getCategories->errorInfo()[2] . PHP_EOL);
+        }
+        return $categories;
+
+        foreach ($categories as $id => $category) {
+
+            $result[] = $category;
+        }
+
+        // $getHosts = $this->getPdo()->prepare("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(?) group by plugin_id order by host_ip");
 
         // $queryByCategory = sprintf("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(%s) group by plugin_id order by host_ip", $plugins_ids);
 
@@ -609,6 +623,7 @@ class ReportData extends ReportsAbstract
 
         // $queryByCategory = sprintf("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(%s) group by plugin_id order by host_ip", $plugins_ids);
 
+        /*
         $getScores->execute(array($reportID));
 
         $scores = $getScores->fetchall(\PDO::FETCH_ASSOC);
@@ -618,5 +633,8 @@ class ReportData extends ReportsAbstract
         }
 
         return $scores;
+        */
+
+        return $result;
     }
 } 

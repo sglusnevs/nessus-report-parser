@@ -143,12 +143,14 @@ $app->get('/xml', function() use($app, $reportData)
     print_r($xml);
 });
 
-$app->get('/categories/:reportType/:reportId/:reportFormat', function ($reportType, $reportId, $reportFormat) use($app, $reportData, $pdo)  // sgl
+$app->get('/categorize/:reportType/:reportId/:reportFormat', function ($reportType, $reportId, $reportFormat) use($app, $reportData, $pdo)  // sgl
 {
     $users = new \Library\Users($pdo);
 
     //Sanitise
     $reportId = strip_tags($reportId);
+
+    $reportHeader = NLS::get('report_type_'. $reportType);
 
     $userCheck = $users->checkReportOwnership($reportId, $_SESSION['userId']);
     if (!$userCheck)
