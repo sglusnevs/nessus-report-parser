@@ -32,7 +32,7 @@ CREATE TABLE `categories` (
   `sort_order` int(11) DEFAULT NULL,
   PRIMARY KEY (`categories_id`),
   UNIQUE KEY `categories_public_id` (`categories_public_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=209473 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,7 +52,7 @@ CREATE TABLE `host_vuln_link` (
   `service` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `report_id` (`report_id`,`plugin_id`,`host_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1265068 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,13 +68,13 @@ CREATE TABLE `hosts` (
   `report_id` int(11) DEFAULT NULL,
   `system_type` varchar(64) DEFAULT NULL,
   `operating_system` varchar(255) DEFAULT NULL,
-  `host_ip` varchar(30) DEFAULT NULL,
+  `host_ip` varchar(46) DEFAULT NULL,
   `host_fqdn` varchar(64) DEFAULT NULL,
   `netbios_name` varchar(64) DEFAULT NULL,
   `mac_address` varchar(255) DEFAULT NULL,
   `credentialed_scan` char(7) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5766 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7441 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,7 +89,7 @@ CREATE TABLE `ignored` (
   `user_id` int(11) DEFAULT NULL,
   KEY `plugin_id` (`plugin_id`,`user_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,7 +107,7 @@ CREATE TABLE `reports` (
   `completed_hosts` int(11) DEFAULT NULL,
   `userId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,27 +123,7 @@ CREATE TABLE `severities` (
   `severity` tinyint(2) DEFAULT NULL,
   KEY `plugin_id` (`plugin_id`,`user_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL DEFAULT '',
-  `password` varchar(255) NOT NULL DEFAULT '',
-  `privilege` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(255) DEFAULT NULL,
-  `pass_length` int(11) DEFAULT NULL,
-  `last_updated` datetime DEFAULT NULL,
-  `severity` float DEFAULT '4',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -171,8 +151,10 @@ CREATE TABLE `vulnerabilities` (
   `cvss_temporal_score` float DEFAULT NULL,
   PRIMARY KEY (`pluginID`),
   KEY `vulnerability` (`vulnerability`),
-  KEY `pluginID` (`pluginID`,`severity`)
-) ENGINE=InnoDB AUTO_INCREMENT=90543 DEFAULT CHARSET=utf8;
+  KEY `pluginID` (`pluginID`,`severity`),
+  KEY `categories_public_id` (`categories_public_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -184,4 +166,43 @@ CREATE TABLE `vulnerabilities` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-29  9:15:43
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL DEFAULT '',
+  `privilege` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `pass_length` int(11) DEFAULT NULL,
+  `last_updated` datetime DEFAULT NULL,
+  `severity` float DEFAULT '4',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'adminstvo','3caf84e8248c5d086862d40bb2c37fe3578930cc763f036ca0fd1a84f61cec2651ae431ea8495f8984224b3dc62e463ec00a4fc259de49e47d60bcaa34652133',0,'Default Admin',8,'2014-06-13 23:56:24',4.4);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2016-04-29 15:07:09
