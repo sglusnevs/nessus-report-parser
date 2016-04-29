@@ -16,7 +16,7 @@ class Classifier {
 
         $rules = array(
           # Malware
-          '/Malicious Process/' => array('Malware', "Verdacht auf Malware-Program", "Signatur von einem Windows Process sieht dem Malware ähnlich", "n/a", 'critical'),
+          '/Malicious Process/' => array('Malware', "Verdacht auf Malware-Program", "Signatur von einem Windows Process ist einem Malware gleich", "n/a", 'critical'),
           # Antivirus
           '/Anti-Virus/' => array('Antivirus', "Probleme mit Antivirus Program", "System ist von dem Antivirus Program nicht mehr adequat geschützt", "Überprüfen Sie, ob Antivirus Program aktuell gepatcht und mit aktueller Virus-Datenbank versorgt ist", 'critical'),
           # patches management
@@ -62,9 +62,9 @@ class Classifier {
           # unauth access possible
           '/NFS Shares World Readable|NFS Share User Mountable|Shares Unprivileged Access|Microsoft Windows SMB Share Hosting Office Files/' => array('UnauthPossible', "Ungeschützte Dateien", "Vertraurliche Dateien sind von Unbefugten möglicherweise erreichbar", "Überprüfen Sie, ob wichtige Dateien über NFS/Windows Shares ohne Authentifizierung zugänglich sind", 'high'),
           # leakage
-          '/NTP monlist Command Enabled|HTTP TRACE(.*) Methods Allowed|mDNS Detection|Web Server Load Balancer Detection|Disclosure|enumeration|export list|Enumerat/' =>  array('HTTPMethLeakage', "Information Leakage", "Ein Angreifer kann nutzbare Information aus dem Dienst auslesen", 'Dienste sollen umkonfiguriert, ausgeschaltet order mit dem Firewall geschützt werden', 'hoch'),
+          '/NTP monlist Command Enabled|HTTP TRACE(.*) Methods Allowed|mDNS Detection|Web Server Load Balancer Detection|Disclosure|enumeration|export list|Enumerat/' =>  array('HTTPMethLeakage', "Information Leakage", "Ein Angreifer kann nutzbare Information aus dem Dienst auslesen", 'Dienste sollen umkonfiguriert, ausgeschaltet order mit dem Firewall geschützt werden', 'high'),
           # default services running
-          '/Microsoft Windows SMB Registry Remotely Accessible|JBoss JMX Console Unrestricted Access|NFS Server Superfluous|Apache Tomcat(.*) default files|Web Server Unconfigured - Default Install Page Present|Terminal Services Enabled|Windows SMB Shares Access/' =>  array('DefaultServices', "Überflüssige Dienste", "Notwendigkeit einiger Dineste soll überprüft werden (Shares, VNC, Remote Registry usw.)", "Unnötige Dienste sollen ausgeschaltet oder mit dem Firewall geschützt werden", 'hoch'),
+          '/Microsoft Windows SMB Registry Remotely Accessible|JBoss JMX Console Unrestricted Access|NFS Server Superfluous|Apache Tomcat(.*) default files|Web Server Unconfigured - Default Install Page Present|Terminal Services Enabled|Windows SMB Shares Access/' =>  array('DefaultServices', "Überflüssige Dienste", "Notwendigkeit einiger Dineste soll überprüft werden (Shares, VNC, Remote Registry usw.)", "Unnötige Dienste sollen ausgeschaltet oder mit dem Firewall geschützt werden", 'high'),
           # DoS/DDos
           '/(DDoS|DoS)/' => array('DoS', "Dienstblockade", 'DoS/DDoS (Angreifer kann das System für Anwender unzugänglich machen)', "Anfällige Dienste sollen ausgeschaltet oder umkonfiguriert werden", 'medium'),
           # Crypto ///
