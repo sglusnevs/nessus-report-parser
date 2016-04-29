@@ -143,7 +143,7 @@ $app->get('/xml', function() use($app, $reportData)
     print_r($xml);
 });
 
-$app->get('/categories/:reportId', function ($reportId) use($app, $reportData, $pdo)  // sgl
+$app->get('/categories/:reportType/:reportId/:reportFormat'', function ($reportType, $reportId, $reportFormat) use($app, $reportData, $pdo)  // sgl
 {
     $users = new \Library\Users($pdo);
 
@@ -157,8 +157,9 @@ $app->get('/categories/:reportId', function ($reportId) use($app, $reportData, $
     }
     else
     {
-        $data = $reportData->getPorts($reportId, '4.4', $_SESSION['userId']);
-        $app->render('reports/categories.phtml', array('reportData' => $data));
+        $data = $reportData->getCategorized($reportId, $reportType);
+
+        $app->render('reports/categorized.phtml', array('reportData' => $data, 'reportFormat' => $reportFormat, 'reportHeader' => $reportHeader, 'app' => $app));
     }
 });
 

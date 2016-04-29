@@ -6,9 +6,8 @@ Parser and report generation for Nessus and OpenDLP XML reports
 REQUIREMENTS:
 
     apache2
-    sqlite3
     PHP 5.4+
-    php5-sqlite
+    php5-mysql
     mysql-server
 
 INSTALLATION:

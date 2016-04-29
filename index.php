@@ -6,8 +6,12 @@
  * Time: 15:34
  */
 
+
+
 include_once('Library/bootstrap.php');
 include_once('Library/Translations.php');
+
+include_once('Library/Categories.php');
 
 $app = new \Slim\Slim(array(
     'templates.path' => './views'

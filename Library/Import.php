@@ -112,10 +112,13 @@ class Import extends ReportsAbstract
 
         $vulnerabilities = [];
         $vulnerabilityLinks = [];
+        $categories = [];
         $preparedVulnerabilities = [];
+        $preparedCategories = [];
         $preparedVulnerabilityLink = [];
 
         foreach ($host->ReportItem as $item) /* @var \SimpleXMLElement $item */ {
+
             $attributes = array();
             if (!$item->cvss_base_score)
             {
@@ -132,6 +135,20 @@ class Import extends ReportsAbstract
                 }
             }
 
+            $categories_public_id = 'null';
+
+            if (intval($cvss) > 0) {
+
+                $category_data = Classifier::get($item['pluginName']);
+
+                if ($category_data) {
+
+                    $categories[] = $category_data;
+                }
+
+                $categories_public_id = $category_data[0];
+            }
+
             $vulnerabilities[] = array(
 
                 $attributes['pluginID'],
@@ -146,6 +163,7 @@ class Import extends ReportsAbstract
                 $item->synopsis,
                 $item->cvss_base_score,
                 $item->cvss_temporal_score,
+                $categories_public_id
 
             );
 
@@ -161,8 +179,16 @@ class Import extends ReportsAbstract
             );
         }
 
-        $addVuln = $this->getPdo()->prepare('INSERT IGNORE INTO vulnerabilities (pluginID, vulnerability, svc_name, severity, pluginFamily, description, cve, risk_factor, see_also, solution, synopsis, cvss_base_score, cvss_temporal_score) VALUES'. implode(',', array_fill(0, count($vulnerabilities), '(?,?,?,?,?,?,?,?,?,?,?,?,?)')));
+
+        $addVuln = $this->getPdo()->prepare('INSERT IGNORE INTO vulnerabilities (pluginID, vulnerability, svc_name, severity, pluginFamily, description, cve, risk_factor, see_also, solution, synopsis, cvss_base_score, cvss_temporal_score, categories_public_id) VALUES'. implode(',', array_fill(0, count($vulnerabilities), '(?,?,?,?,?,?,?,?,?,?,?,?,?,?)')));
+
         $addVulnLink = $this->getPdo()->prepare('INSERT INTO host_vuln_link (report_id, host_id, plugin_id, port, protocol, service) VALUES' . implode(',', array_fill(0, count($vulnerabilityLinks), '(?, ?, ?, ?, ?, ?)')));
+
+        if (count($categories))
+        {
+
+            $addCategory = $this->getPdo()->prepare('INSERT IGNORE INTO categories (categories_public_id, category_title_main, category_subtitle_main, category_solution_main, severity, sort_order) VALUES'. implode(',', array_fill(0, count($categories), '(?,?,?,?,?,?)')));
+        }
 
         foreach ($vulnerabilities as $vulnerability)
         {
@@ -172,9 +198,19 @@ class Import extends ReportsAbstract
         {
             $preparedVulnerabilityLink = array_merge($preparedVulnerabilityLink, $vulnerabilityLink);
         }
+        foreach ($categories as $category)
+        {
+            $preparedCategories = array_merge($preparedCategories, $category);
+        }
 
         $addVuln->execute($preparedVulnerabilities);
+
         $addVulnLink->execute($preparedVulnerabilityLink);
+
+        if (count($categories)) 
+        {
+            $addCategory->execute($preparedCategories);
+        }
 
     }
 } 
