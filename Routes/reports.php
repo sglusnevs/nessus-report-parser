@@ -143,7 +143,7 @@ $app->get('/xml', function() use($app, $reportData)
     print_r($xml);
 });
 
-$app->get('/categories/:reportType/:reportId/:reportFormat'', function ($reportType, $reportId, $reportFormat) use($app, $reportData, $pdo)  // sgl
+$app->get('/categories/:reportType/:reportId/:reportFormat', function ($reportType, $reportId, $reportFormat) use($app, $reportData, $pdo)  // sgl
 {
     $users = new \Library\Users($pdo);
 

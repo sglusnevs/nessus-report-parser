@@ -137,3 +137,20 @@ TO-DO:
         Implement privilege levels
         Add user management page
         Add custom report creation
+
+        Adding new reports:
+
+        1. Add Nessus reports to drop-down in
+
+        views/menus/nessusIndex.phtml
+
+          <option value="report_tag/' . $report['id'] . '">report_name</option>
+
+
+
+          2. Add Routes in Routes/reports.php
+
+          3. Add SQL in Library/ReportData.php
+
+          3. Add render into views/reports/<my_report>.phtml
+

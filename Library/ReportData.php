@@ -599,8 +599,15 @@ class ReportData extends ReportsAbstract
 
         // $services = $this->loadXML(__DIR__ . '/../service-names-port-numbers.xml');
 
-        $getCategories = $this->getPdo()->prepare("select * from categories order by sort_order");
-        $getScores = $this->getPdo()->prepare("select host_name, system_type, operating_system, host_ip, host_fqdn, netbios_name, mac_address, credentialed_scan, floor(max($score_type)) as cvss_score_max, floor(sum($score_type)) as cvss_score_sum from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) left join vulnerabilities on (host_vuln_link.plugin_id = vulnerabilities.pluginID) where host_vuln_link.report_id = ?  group by hosts.id order by sum($score_type) desc");
+        $getCategories = $this->getPdo()->prepare("select severity, categories_title_main, categories_subtitle_main, categories_solution_main, group_concat(vulnerabilities.pluginID separator ',') as plugin_ids_list from categories left join vulnerabilities using (categories_public_id) where vulnerabilities.pluginID is not null order by sort_order");
+
+        $getHosts = $this->getPdo()->prepare("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(?) group by plugin_id order by host_ip");
+
+        // $queryByCategory = sprintf("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(%s) group by plugin_id order by host_ip", $plugins_ids);
+
+        // $getScores = $this->getPdo()->prepare("select host_name, system_type, operating_system, host_ip, host_fqdn, netbios_name, mac_address, credentialed_scan, floor(max($score_type)) as cvss_score_max, floor(sum($score_type)) as cvss_score_sum from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) left join vulnerabilities on (host_vuln_link.plugin_id = vulnerabilities.pluginID) where host_vuln_link.report_id = ?  group by hosts.id order by sum($score_type) desc");
+
+        // $queryByCategory = sprintf("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = $reports_id and host_vuln_link.plugin_id in(%s) group by plugin_id order by host_ip", $plugins_ids);
 
         $getScores->execute(array($reportID));
 
