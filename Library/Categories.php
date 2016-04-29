@@ -48,26 +48,26 @@ class Classifier {
           # leakage
           '/HTTP TRACE(.*) Methods Allowed|Information Disclosure|enumeration|export list|Enumerate/' =>  array('HTTPMethLeakage', "Information Leakage", "Ein Angreifer kann nutzbare Information aus dem Dienst auslesen", 'Dienste sollen umkonfiguriert, ausgeschaltet order mit dem Firewall geschützt werden', 'medium'),
           # default passwords/SNMP community names
-          '//' => array('MicrosoftSMS', "Unsichere Passwörter-Caching", "Systeme cachen Passswörter im Arbeitsspeicher, wo die dem Angreifer zur Verfügung stehen", "Systeme sollen unkonfiguriert oder upgegradet werden", 'middle'),
+          '/SNMP Agent Default Community Name \(public\)/' => array('defaultSNMP', "Vorgegebene SNMP Community name (public)", "Es ist möglich, Informationen aus den Systemen auslesen oder sogar ändern", "Vorgegebene Namen sollten geändert werden", 'high'),
           # Reboot required
-          '/Microsoft Windows Update Reboot Required/' => array('MicrosoftReboot', "Neustart notwendig", "Patches sind zwar installiert, doch ohne Neustart des Systems sind unwirksam", "Starten Die Systeme neu", 'hoch'),
+          '/Microsoft Windows Update Reboot Required/' => array('MicrosoftReboot', "Neustart notwendig", "Patches sind zwar installiert, doch ohne Neustart des Systems sind unwirksam", "Starten Die Systeme neu", 'high'),
           # cached passwords
-          '/Microsoft Windows SMB Registry(.*) Password Weakness|IBM iSeries Cached Passwords|Password Hash Disclosure/' => array('MicrosoftSMS', "Unsichere Passwörter-Caching", "Systeme cachen Passswörter im Arbeitsspeicher, wo die dem Angreifer zur Verfügung stehen", "Systeme sollen unkonfiguriert oder upgegradet werden", 'middle'),
+          '/Microsoft Windows SMB Registry(.*) Password Weakness|IBM iSeries Cached Passwords|Password Hash Disclosure/' => array('MicrosoftSMS', "Unsichere Passwörter-Caching", "Systeme cachen Passswörter im Arbeitsspeicher, wo die dem Angreifer zur Verfügung stehen", "Systeme sollen unkonfiguriert oder upgegradet werden", 'medium'),
           # Crypto ///
-          '/Unencrypted|Telnet Server|Microsoft Windows Remote Desktop Protocol Server Man-in-the-Middle Weakness|SMB Signing Disabled|Weak Algorithms|Encryption|TLS|SSH|SSL|Terminal Services Doesn\'t Use Network Level Authentication|HSTS Missing From HTTPS Server/' =>  array('Crypto', "Verschlüsselung", "Veraltete oder keine Verschlüsselung", "Sensible Daten werden mit dieser Anwendung nicht mehr adequat geschützt. Solche anwendungen sollen umkonfiguriert, upgegradet oder ausgetauscht werden", 'medium'),
+          '/Unencrypted|Telnet Server|Cleartext|Microsoft Windows Remote Desktop Protocol Server Man-in-the-Middle Weakness|SMB Signing Disabled|Weak Algorithms|Encryption|TLS|SSH|SSL|Terminal Services Doesn\'t Use Network Level Authentication|HSTS Missing From HTTPS Server/' =>  array('Crypto', "Verschlüsselung", "Veraltete oder keine Verschlüsselung", "Sensible Daten werden mit dieser Anwendung nicht mehr adequat geschützt. Solche anwendungen sollen umkonfiguriert, upgegradet oder ausgetauscht werden", 'medium'),
           # default services running
-          '/Microsoft Windows SMB Registry Remotely Accessible|JBoss JMX Console Unrestricted Access|NFS Server Superfluous|Apache Tomcat(.*) default files|Web Server Unconfigured - Default Install Page Present|Terminal Services Enabled|Windows SMB Shares Access/' =>  array('DefaultServices', "Überflüssige Dienste", "Sämtliche Dienste, die Zugriff aus dem Netzwerk erlauben (Web-Server, Windows Shares, VNC, Terminal Services, Remote Registry), sollen überprüft werden, ob diese Dienste tatsächlich notwendig sind", "Unnötige Dienste sollen ausgeschaltet oder mit dem Firewall geschützt werden", 'middle'),
+          '/Microsoft Windows SMB Registry Remotely Accessible|JBoss JMX Console Unrestricted Access|NFS Server Superfluous|Apache Tomcat(.*) default files|Web Server Unconfigured - Default Install Page Present|Terminal Services Enabled|Windows SMB Shares Access/' =>  array('DefaultServices', "Überflüssige Dienste", "Sämtliche Dienste, die Zugriff aus dem Netzwerk erlauben (Web-Server, Windows Shares, VNC, Terminal Services, Remote Registry), sollen überprüft werden, ob diese Dienste tatsächlich notwendig sind", "Unnötige Dienste sollen ausgeschaltet oder mit dem Firewall geschützt werden", 'medium'),
           # unauth access possible
           '/NFS Shares World Readable|Microsoft Windows SMB Share Hosting Office Files/' => array('UnauthPossible', "Ungeschützte Dateien", "Es ist möglich, dass vertraurliche Dateien von allen erreichbar sind", "Überprüfen Sie, ob wichtige Dateien über NFS/Windows Shares ohne Authentifizierung zugänglich sind", 'high'),
           # mp3 fies found
           '/Microsoft Windows SMB Share Hosting Possibly Copyrighted Material/' => array('Copyright', "Urheberrecht", "Es ist möglich, dass Shares bestimmte Dateien (wie mp3, .ogg, .mpg, .avi) enthalten, die unter dem Urheberrechtsschutz stehen", "Überprüfen Sie Shares und Dateien", 'low'),
           # DoS/DDos
-          '/(DDoS|DoS)/' => array('DoS', "Dienstblockade", 'Ein Angreifer kann das System für die anderen Anwender unzugänglich machen', "Anfällige Dienste sollen ausgeschaltet oder umkonfiguriert werden", 'middle'),
+          '/(DDoS|DoS)/' => array('DoS', "Dienstblockade", 'Ein Angreifer kann das System für die anderen Anwender unzugänglich machen', "Anfällige Dienste sollen ausgeschaltet oder umkonfiguriert werden", 'medium'),
           # further checks needed
-          '/Additional DNS Hostnames|Insecure Windows Service Permissions|Reputation of Windows Executables: Unknown Process|RIP-2 Poisoning Routing Table Modification|Web Server No 404 Error Code Check|Open Port Re-check/' => array('ChecksNeeded', "Auffälligkeiten", 'Es besteht Verdacht auf bestimmte Schwachstellen, die aber auch "false positives" sein können', 'Bitte anfällige Systeme mithilfe von dem vollständigen Bericht genau auswerten', 'low'),
+          '/Additional DNS Hostnames|Non-standard Port|Insecure Windows Service Permissions|Reputation of Windows Executables: Unknown Process|RIP-2 Poisoning Routing Table Modification|Web Server No 404 Error Code Check|Open Port Re-check/' => array('ChecksNeeded', "Auffälligkeiten", 'Es besteht Verdacht auf bestimmte Schwachstellen, die aber auch "false positives" sein können', 'Bitte anfällige Systeme mithilfe von dem vollständigen Bericht genau auswerten', 'low'),
         );
 
-        $notFound =  array('Uncategorized', "Nicht kategorisiert", 'Schwachstelle ohne Kategorie', 'Diese Schwachstelle ist noch nicht kategorisiert', 'info');
+        $notFound =  array('Uncategorized', "Nicht kategorisiert", 'Schwachstelle ohne Kategorie', 'Diese Schwachstelle ist noch nicht kategorisiert', 'info', 10000);
 
         $order = 0;
 
@@ -78,6 +78,13 @@ class Classifier {
             if (preg_match($rule_preg, $vulnerability)) {
 
                 $rule_data[5] = $order;
+
+                /*
+                if (preg_match('/public/', $vulnerability)) {
+
+                     error_log ("Found category for '$vulnerability' (". $rule_data[0] . ")");
+                }
+                */
 
                 return $rule_data;
             }

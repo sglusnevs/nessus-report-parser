@@ -599,7 +599,7 @@ class ReportData extends ReportsAbstract
 
         $result = false;
 
-        $getCategories = $this->getPdo()->prepare("select categories.severity, categories_title_main, categories_subtitle_main, categories_solution_main, group_concat(vulnerabilities.pluginID separator ',') as plugin_ids_list from categories left join vulnerabilities using (categories_public_id) where vulnerabilities.pluginID is not null order by sort_order");
+        $getCategories = $this->getPdo()->prepare("select categories.severity, categories_title_main, categories_subtitle_main, categories_solution_main, group_concat(vulnerabilities.pluginID separator ',') as plugin_ids_list from categories left join vulnerabilities using (categories_public_id) where vulnerabilities.pluginID is not null group by categories_public_id order by sort_order");
 
         $getCategories->execute();
 
@@ -608,7 +608,6 @@ class ReportData extends ReportsAbstract
         if (!$categories) {
             die('Sorry, we couldn\'t get the categories list: ' . $getCategories->errorInfo()[2] . PHP_EOL);
         }
-        return $categories;
 
         foreach ($categories as $id => $category) {
 
