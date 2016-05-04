@@ -23,6 +23,7 @@ class ReportData extends ReportsAbstract
         foreach ($reportList as $report) {
             array_push($reports, array('id'          => $report['id'],
                                        'report_name' => $report['report_name'],
+                                       'report_filename' => $report['report_filename'],
                                        'created'     => $report['created'],
                                        'hosts'       => $report['total_hosts'],
                                        'completed'   => $report['completed_hosts']));
@@ -611,7 +612,6 @@ class ReportData extends ReportsAbstract
 
         $categories = $getCategories->fetchall(\PDO::FETCH_ASSOC);
 
-        $getHosts = $this->getPdo()->prepare("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = ? and host_vuln_link.plugin_id in(?) order by host_ip");
 
         if (!$categories) {
             die('Sorry, we couldn\'t get the categories list: ' . $getCategories->errorInfo()[2] . PHP_EOL);
@@ -619,12 +619,19 @@ class ReportData extends ReportsAbstract
 
         foreach ($categories as $id => $category) {
 
-            $getHosts->execute(array($reportID, $category['plugin_ids_list']));
+            $getHosts = $this->getPdo()->prepare("select distinct host_ip from hosts left join host_vuln_link on (hosts.id = host_vuln_link.host_id) where host_vuln_link.report_id = ? and host_vuln_link.plugin_id in(". $category['plugin_ids_list'].") order by host_ip");
+
+            $getHosts->execute(array($reportID));
 
             $hosts = $getHosts->fetchall(\PDO::FETCH_COLUMN);
 
             if (!is_array($hosts)) {
                 die('Sorry, we couldn\'t get the host list: ' . $getHosts->errorInfo()[2] . PHP_EOL);
+            }
+
+            if (!count($hosts)) {
+
+                continue;
             }
 
             $category['hosts'] = $hosts;
