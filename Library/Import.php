@@ -14,6 +14,7 @@ class Import extends ReportsAbstract
 
     protected $xmlObj;
     protected $reportName;
+    protected $reportFileName;
     protected $reportID;
     protected $completedHosts = 1;
 
@@ -37,10 +38,11 @@ class Import extends ReportsAbstract
     public function createReport($userId, $xml) // Create report in database and spawn further functions for vulnerabilities and hosts.
     {
         $this->xmlObj = simplexml_load_file($xml);
+        $this->reportFileName = basename($xml);
         $this->reportName = $this->xmlObj->Report[0]['name'];
         $totalHosts = $this->xmlObj->Report[0]->ReportHost->count();
-        $createReport = $this->getPdo()->prepare('INSERT INTO reports (report_name, created, total_hosts, userid) VALUES(?, ?, ?, ?)');
-        $createdOk = $createReport->execute(array($this->xmlObj->Report[0]['name'], date('Y-m-d H:i:s'), $totalHosts, $userId));
+        $createReport = $this->getPdo()->prepare('INSERT INTO reports (report_name, report_filename, created, total_hosts, userid) VALUES(?,?, ?, ?, ?)');
+        $createdOk = $createReport->execute(array($this->xmlObj->Report[0]['name'], $this->reportFileName, date('Y-m-d H:i:s'), $totalHosts, $userId));
         if (!$createdOk)
         {
             die(print_r($createReport->errorInfo()));
