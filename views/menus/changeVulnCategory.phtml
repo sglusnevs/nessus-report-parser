@@ -76,8 +76,8 @@ foreach ($vulnerabilities as $vulnerability) {
 
     } else {
 
-        $vulnerabilities_category_current = 'Informational';
-        $vulnerabilities_severity_current = 'info';
+        $vulnerabilities_category_current = '';
+        $vulnerabilities_severity_current = '';
     }
 
     echo'
@@ -91,7 +91,7 @@ foreach ($vulnerabilities as $vulnerability) {
 
                 echo '<option '. severity2style($categories_data['severity']). ' value ="'. $categories_public_id. '">'. $categories_data['categories_subtitle_main']. '</option>'. "\n";
             }
-            echo '<option '. severity2style('info'). ' value ="null">Informational</option>'. "\n";
+            echo '<option value ="null"></option>'. "\n";
 
         echo '
         </select>
