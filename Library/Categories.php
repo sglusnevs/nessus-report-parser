@@ -74,7 +74,7 @@ class Classifier {
           # mp3 fies found
           '/Microsoft Windows SMB Share Hosting Possibly Copyrighted Material/' => array('Copyright', "Urheberrecht", "Es ist möglich, dass Shares bestimmte Dateien (wie mp3, .ogg, .mpg, .avi) enthalten, die unter dem Urheberrechtsschutz stehen", "Überprüfen Sie Shares und Dateien", 'low'),
           # further checks needed
-          '/Additional DNS Hostnames|Non-standard Port|Insecure Windows Service Permissions|Reputation of Windows Executables: Unknown Process|RIP-2 Poisoning Routing Table Modification|Web Server No 404 Error Code Check|Open Port Re-check/' => array('ChecksNeeded', "Auffälligkeiten", 'Es besteht Verdacht auf bestimmte Schwachstellen, die aber auch "false positives" sein können', 'Bitte anfällige Systeme mithilfe von dem vollständigen Bericht genau auswerten', 'low'),
+          '/Additional DNS Hostnames|Non-standard Port|Insecure Windows Service Permissions|Reputation of Windows Executables: Unknown Process|RIP-2 Poisoning Routing Table Modification|Web Server No 404 Error Code Check|Open Port Re-check/' => array('ChecksNeeded', "Auffälligkeiten", 'Es besteht Verdacht auf bestimmte Schwachstellen, die aber auch "false positives" sein können', 'Bitte anfällige Systeme mithilfe von dem vollständigen Bericht genau auswerten', 'medium'),
         );
 
         $notFound =  array('Uncategorized', "Andere", 'Andere Schwachstellen', 'Verschiedene Schwachstellen ohne Kategorie', 'medium', 10000);
