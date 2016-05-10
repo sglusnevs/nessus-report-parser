@@ -30,7 +30,7 @@ echo '
 
         echo'
         <li>
-            <label>' . htmlspecialchars($report['report_name']) . ' (' . htmlspecialchars($report['created']) . ')</label>
+            <label>' . htmlspecialchars($report['report_filename']) . ' (' . htmlspecialchars($report['created']) . ')</label>
             <select onchange="location = this.options[this.selectedIndex].value; loadingScreen()">
                 <option selected> '. $label .' </option>
                 <option value="hosts_cvss/base/' . $report['id'] . '/html">Hosts Ranked by CVSS Base Score</option>

@@ -61,14 +61,13 @@ print($row_start .
     );
 
 
-
 foreach ($reportData as $hostData) {
 
     global $import;
 
     for ($n = 0; $n < count($hostData['hosts']); $n++) {
 
-        $hostData['hosts'][$n] = $import->ipUnpad($hostData['hosts'][$n]);
+        $hostData['hosts'][$n] = ipUnpad($hostData['hosts'][$n]);
     }
 
     $hosts = join($sep_multiline, $hostData['hosts']);

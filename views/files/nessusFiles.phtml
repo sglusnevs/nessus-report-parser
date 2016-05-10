@@ -44,7 +44,7 @@ if ($app->request()->get('admin'))
 }
 echo '
 
-<p class="header">Stored Nessus Reports</p>
+<p class="header">Uploaded Nessus Files</p>
 
 <div class="fileMenu">
     <form action="/nessusMenu/admin" method="post">
@@ -56,6 +56,14 @@ echo '
 ';
 
 foreach ($reports as $file => $hash) {
+
+    // hide files staring with dot
+
+    if (preg_match('/^\./', $file)) {
+
+        continue;
+    }
+
     echo '
             <tr>
                 <td> ' . htmlspecialchars($file) . ' </td>

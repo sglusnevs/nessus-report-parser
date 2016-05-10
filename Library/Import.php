@@ -70,7 +70,7 @@ class Import extends ReportsAbstract
         $insertHost = $this->getPdo()->prepare('INSERT INTO hosts (report_id, host_name) VALUES(?, ?)');
         foreach ($this->xmlObj->Report[0]->ReportHost as $host) {
 
-            $insertedHost = $insertHost->execute(array($this->reportID, $this->ipLpad($host['name'])));
+            $insertedHost = $insertHost->execute(array($this->reportID, ipLpad($host['name'])));
             if (!$insertedHost)
             {
                 die(print_r($insertHost->errorInfo()));
@@ -88,72 +88,6 @@ class Import extends ReportsAbstract
     }
 
 
-    public function ipLpad($ip) {
-
-        $result = array();
-
-        // roughly check if this is a valid IP (IPv4 or 6)
-
-        if (!preg_match('/([.:])/', $ip, $matches)) {
-
-            return $ip;
-        }
-
-        $delim = $matches[0];  // should be either ':' or '.'
-
-        foreach (explode($delim, $ip) as $octet) {
-
-            // pad only digits
-
-            if (preg_match('/^\d+$/', $octet)) {
-
-                $result[] = str_pad($octet, 3, '0', STR_PAD_LEFT);
-            }
-        }
-
-        // expect minimum lenght as 3 octets
-
-        if (count($result) >= 4) {
-
-            return join($delim, $result);
-
-        } else {
-
-            return $ip;
-        }
-    }
-
-    public function ipUnpad($ip) {
-
-        $result = array();
-
-        // roughly check if this is a valid IP (IPv4 or 6)
-
-        if (!preg_match('/([.:])/', $ip, $matches)) {
-
-            return $ip;
-        }
-
-        $delim = $matches[0];  // should be either ':' or '.'
-
-        foreach (explode($delim, $ip) as $octet) {
-
-            // unpad only digits
-
-            $result[] = preg_replace('/^0+(\d+)/', '$1', $octet);
-        }
-
-        // expect minimum lenght as 3 octets
-
-        if (count($result) >= 4) {
-
-            return join($delim, $result);
-
-        } else {
-
-            return $ip;
-        }
-    }
 
 
     private function addHostDetails($hostID, $properties) // Add all host details such as FQDN, Operating system etc to the database
@@ -175,7 +109,7 @@ class Import extends ReportsAbstract
                 // pad IPs with zeros
                 if (in_array($name, $paddible)) {
 
-                    $value = $this->ipLpad($value);
+                    $value = ipLpad($value);
                 }
                 $updateHost = $hostUpdate->execute(array($value, $hostID));
                 if (!$updateHost)

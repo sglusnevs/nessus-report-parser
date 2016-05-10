@@ -21,6 +21,7 @@ class NLS {
             case 'low': $result = 'Niedrig'; break;
             case 'medium': $result = 'Mittel'; break;
             case 'high': $result = 'Hoch'; break;
+            case 'critical': $result = 'Kritisch'; break;
             case 'ip_long': $result = 'IP-Longwert'; break;
             case 'cvss_score_sum': $result = 'CVSS gesamt'; break;
             case 'cvss_score_max': $result = 'CVSS max.'; break;
