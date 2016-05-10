@@ -30,7 +30,7 @@ INSTALLATION:
 
     Clone the repository:
 
-    # git clone https://github.com/sglusnevs/nessus-report-parser-bulk
+    # git clone https://<USERNAME>@bitbucket.org/seveal/nessus-report-parser.git
 
     # cd /var/www/html/nessus-report-parser-bulk
 
