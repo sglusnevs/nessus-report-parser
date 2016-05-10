@@ -5,6 +5,10 @@ This tool is based on the Nessus Report Parser by Simon Beattie (https://github.
 
 I attempted to midify original version to process Nessus reports, collected from larger environments.
 
+In case if you experience problems trying to import large .nessus files, make sure you have enough RAM -- Python script performing import is pretty resource-intensive.
+
+I recommend a decent VM with at least of couble Gigabytes of RAM.
+
 REQUIREMENTS:
 
     apache2
@@ -18,139 +22,90 @@ INSTALLATION:
 
     # apt-get install php5 apache2 php5-mysql mysql-server git
 
+    # systemctl enable apache2 ;  systemctl start apache2
+
+    # systemctl enable mysql ;  systemctl start mysql
+
     # cd /var/www/html/
 
     Clone the repository:
-        git clone https://github.com/sglusnevs/nessus-report-parser-bulk
+
+    # git clone https://github.com/sglusnevs/nessus-report-parser-bulk
+
+    # cd /var/www/html/nessus-report-parser-bulk
 
     Create MYSQL Database
-        mysql -u root -p reports < Database/mysql_schema.sql
 
-        Setup privileges for another user on the reports database
+    # mysql -u root -p < Database/mysql_schema.sql
+
+    Create user for reports database
+
+    # echo 'CREATE USER "reports"@"localhost" IDENTIFIED BY "password";' | mysql -u root -p
+
+    # echo 'GRANT ALL PRIVILEGES ON reports.* TO "reports"@"localhost";' | mysql -u root -p
+
+    # echo 'FLUSH PRIVILEGES;' | mysql -u root -p
 
     Configure System
         edit config.php with Database authentication details
 
     Add host line within hosts file:
-        sudo nano /etc/hosts
+        sudo vi /etc/hosts
         ADD:
 
             127.0.0.1  reports.local
 
     Edit the Apache Configuration:
-        sudo nano /private/etc/apache2/httpd.conf
-        ADD (right at the top of the file):
+        sudo vi /etc/apache2/sites-available/000-default.conf
 
-                NameVirtualHost *:80
-                <VirtualHost *:80>
-                  ServerName reports.local
-                  ServerAdmin simon.beattie@randomstorm.com
-                  DocumentRoot "/Users/simonbeattie/www/nessus-report-parser/"
+        Find string starting with "DocumentRoot" and replace with:
 
-                  <Directory "/Users/simonbeattie/www/nessus-report-parser/">
-                    Options Indexes FollowSymLinks MultiViews
-                    AllowOverride All
-                    Order allow,deny
-                    allow from 127.0.0.1
-                  </Directory>
-                ErrorLog "/private/var/log/apache2/reports-vhost.log"
-                LogLevel warn
-              </VirtualHost>
+            DocumentRoot /var/www/html/nessus-report-parser-bulk
 
-        UNCOMMENT:
 
-            #LoadModule php5_module libexec/apache2/libphp5.so
+        Add the following lines straight after that:
 
-        AND
+        <Directory /var/www/html/nessus-report-parser-bulk>
+            Options Indexes FollowSymLinks MultiViews
+            AllowOverride All
+        </Directory>
 
-            #LoadModule rewrite_module libexec/apache2/mod_rewrite.so
+
+        Enable Apache modules:
+
+        # ln -s /etc/apache2/mods-available/rewrite.load  /etc/apache2/mods-enabled/
+
+        # ln -s /etc/apache2/mods-available/php5.load  /etc/apache2/mods-enabled/
+
+        Set the following in your php.ini: `upload_max_filesize = 2048M´, `post_max_size = 2048M´ to be able to upload huge reports
+
+        # sudo vi /etc/php5/apache2/php.ini
+
 
     Restart Apache
         sudo apachectl restart
 
     Completed:
         You should now be able to navigate to the system: http://reports.local
-        Default username and password is simon.beattie@randomstorm.com:pa55word
+        Default username and password is adminstvo:pa55word
 
 UPDATING:
 
-    Simply run ./update to pull all the latest changes.
+    Run to pull all the latest changes:
 
-UPDATES:
+    # cd /var/www/html/nessus-report-parser-bulk
 
-    16th April 2014:
-        Changed storage engine from MySQL to SQLite3
+    # git pull
 
-    4th June 2014:
-        Added PCI report output
 
-    9th June 2014:
-        File Management
-            Added the ability to upload reports
-                You can currently upload any sort of file
-            Added the ability to import reports
-                This imports into the database through the interface (exactly the same as if you were to use the import.php script)
-            Added the ability to delete reports
-                Simply removed the uploaded reports (doesn’t yet remove anything from the database)
-            Added the ability to merge report
-                This uses a modified version of the python script you all use anyway. I’ve tested merging up to 4 reports at once.
-            Interface Updates
-                A number of changes to how information is displayed, and generally CSSing
 
-    10th June 2014:
-            Limitation to file upload type (.xml & .nessus) -- REMOVED DUE TO SAFARI BUG
-            Added 900row limit for vulnerability report tables due to pages bug
-            Report output for OpenDLP reports
-            Added file management functionality for OpenDLP
-            Added OpenDLP reports list
-
-    11th June 2014:
-            Complete rewrite of a large portion of the application
-            Integrated slim micro framework
-            Removed all reliance on Curl
-            Nessus report importing fully available through interface
-            Moved all reports onto view templates and implemented render() method
-
-    12th June 2014:
-            Refactored application for a server model
-            Added authentication
-            Added user administration (add, remove, change)
-            Added user specific report views
-            Separated user uploads
-            Major interface overhaul
-            Moved all templates into view folders
-            Added site wide headers and footers
-            Removed all CSS loading screens
-            Moved back to MySQL
-
-    13th June 2014:
-            Added validation for OpenDLP and Nessus XML uploads
-
-    20th January 2015:
-            Changed Internal and External output tables to reflect report changes
-            Added TCP/UDP Open ports report
-
-TO-DO:
-
-        Limitation to file upload sizes
-        .xls output for all vulnerabilities
-        Template download / storage
-        Reinstate the ability to change severity filter through interface
-        Move footer to float at the bottom!
-        CSS menu drop downs to fit correctly
-        Implement privilege levels
-        Add user management page
-        Add custom report creation
-
-        Adding new reports:
+NEW REPORTS:
 
         1. Add Nessus reports to drop-down in
 
         views/menus/nessusIndex.phtml
 
           <option value="report_tag/' . $report['id'] . '">report_name</option>
-
-
 
           2. Add Routes in Routes/reports.php
 
