@@ -1,7 +1,9 @@
-nessus-report-parser
+nessus-bulk-parser
 ====================
 
-Parser and report generation for Nessus and OpenDLP XML reports
+This tool is based on the Nessus Report Parser by Simon Beattie (https://github.com/simonbt/nessus-report-parser)
+
+I attempted to midify original version to process Nessus reports, collected from larger environments.
 
 REQUIREMENTS:
 
@@ -12,12 +14,14 @@ REQUIREMENTS:
 
 INSTALLATION:
 
-    Create web directory (change my name for your username):
-        mkdir -p /Users/simonbeattie/www
-        cd /Users/simonbeattie/www
+    For Kali Linux:
+
+    # apt-get install php5 apache2 php5-mysql mysql-server git
+
+    # cd /var/www/html/
 
     Clone the repository:
-        git clone https://github.com/simonbt/nessus-report-parser.git
+        git clone https://github.com/sglusnevs/nessus-report-parser-bulk
 
     Create MYSQL Database
         mysql -u root -p reports < Database/mysql_schema.sql

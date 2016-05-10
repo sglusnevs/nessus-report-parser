@@ -34,7 +34,7 @@ foreach ($reportData as $hostData) {
 
     foreach ($hostData['vulnerabilities'] as $vulnerability) {
         $data[] = array(
-            'ip'       => ip2long($hostData['hostname']),
+            'ip'       => ip2longUnpad($hostData['hostname']),
             'name'     => $name,
             'os'       => $OS,
             'vuln'     => $vulnerability['name'],

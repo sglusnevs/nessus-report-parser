@@ -6,6 +6,10 @@
  * Time: 12:38
  */
 
+
+////
+// Adds leading zeros to every IP-address' octet to enable smooth sortintg in spredsheets
+//
 function ipLpad($ip) {
 
     $result = array();
@@ -41,6 +45,9 @@ function ipLpad($ip) {
     }
 }
 
+////
+// Removes leading zeros added by ipLpad
+//
 function ipUnpad($ip) {
 
     $result = array();
@@ -71,4 +78,13 @@ function ipUnpad($ip) {
 
         return $ip;
     }
+}
+
+
+////
+// Since php's native ip2long is unable to handle IP-addresses with leading zeros, here comes handy shortcut
+//
+function ip2longUnpad($ip) {
+
+    return ip2long(ipUnpad($ip));
 }
