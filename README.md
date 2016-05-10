@@ -3,7 +3,7 @@ nessus-bulk-parser
 
 This tool is based on the Nessus Report Parser by Simon Beattie (https://github.com/simonbt/nessus-report-parser)
 
-I attempted to midify original version to process Nessus reports, collected from larger environments.
+I attempted to modify original version to process Nessus reports, collected from larger environments.
 
 In case if you experience problems trying to import large .nessus files, make sure you have enough RAM -- Python script performing import is pretty resource-intensive.
 
@@ -95,7 +95,7 @@ UPDATING:
 
     # cd /var/www/html/nessus-report-parser-bulk
 
-    # git fetch --all
+    # git pull
 
 
 
