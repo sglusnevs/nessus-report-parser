@@ -1,4 +1,4 @@
-nessus-bulk-parser
+nessus-parser
 ====================
 
 This tool is based on the Nessus Report Parser by Simon Beattie (https://github.com/simonbt/nessus-report-parser)
@@ -32,7 +32,7 @@ INSTALLATION:
 
     # git clone https://<USERNAME>@bitbucket.org/seveal/nessus-report-parser.git
 
-    # cd /var/www/html/nessus-report-parser-bulk
+    # cd /var/www/html/nessus-report-parser
 
     Create MYSQL Database
 
@@ -60,12 +60,12 @@ INSTALLATION:
 
         Find string starting with "DocumentRoot" and replace with:
 
-            DocumentRoot /var/www/html/nessus-report-parser-bulk
+            DocumentRoot /var/www/html/nessus-report-parser
 
 
         Add the following lines straight after that:
 
-        <Directory /var/www/html/nessus-report-parser-bulk>
+        <Directory /var/www/html/nessus-report-parser>
             Options Indexes FollowSymLinks MultiViews
             AllowOverride All
         </Directory>
@@ -93,7 +93,7 @@ UPDATING:
 
     Run to pull all the latest changes:
 
-    # cd /var/www/html/nessus-report-parser-bulk
+    # cd /var/www/html/nessus-report-parser
 
     # git pull
 
