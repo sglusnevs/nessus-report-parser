@@ -95,7 +95,7 @@ UPDATING:
 
     # cd /var/www/html/nessus-report-parser-bulk
 
-    # git pull
+    # git fetch --all
 
 
 
