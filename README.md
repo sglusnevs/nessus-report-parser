@@ -34,6 +34,10 @@ INSTALLATION:
 
     # cd /var/www/html/nessus-report-parser
 
+    Make uploads folder writable:
+
+    # chmod -R a+rwx /var/www/html/nessus-report-parser/Library/uploads/
+
     Create MYSQL Database
 
     # mysql -u root -p < Database/mysql_schema.sql
