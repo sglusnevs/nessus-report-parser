@@ -1,0 +1,81 @@
+<?php
+/**
+ * nessus-report-parser - hidden.phtml.
+ * User: sgl
+ * Date: 18/06/2014
+ * Time: 11:03
+ */
+
+include(__DIR__ . '/../includes/menuHeader.phtml');
+
+$severity = $app->request()->get('result');
+$plugin = $app->request()->get('plugin');
+
+ // echo 'ZZZ<pre>'; print_r($categories); 
+
+echo '
+<p class="header">Manage Categories</p>
+';
+
+echo '
+    <form method="post">
+    <div style="width: 1170px; text-align: right">
+    <input type="submit" value="Submit Changes" name="update">
+    <input type="submit" value="Add Category" name="add">
+    <table class="categories" cellspacing="0" cellpadding="6">
+        <tr>
+            <td><h3>Category Title</h3></td>
+            <td><h3>Category Subtitle</h3></td>
+            <td><h3>Proposed Solution</h3></td>
+            <td><h3>Order</h3></td>
+            <td><h3>Visible</h3></td>
+        </tr>
+        <tr>
+            <td colspan="5"><hr /></td>
+        </tr>
+';
+
+foreach ($categories as $category) {
+
+    echo '<tr>';
+
+    if ($category['is_auto_added']) {
+        $action_remove = ''; // automatically added categories cannot be removed, since they pop up next time a Nessus file is parsed
+    } else {
+        $action_remove = '<input type="submit" value="X" name="remove['. $category['categories_public_id']. ']" onClick=\'if (confirm("Remove \"'.  htmlspecialchars($category['categories_title_main']). ' / '. htmlspecialchars($category['categories_subtitle_main']).'\"?")) return true; else return false;\'>';
+    }
+
+    if ($category['is_hidden']) {
+        $css = ' style="color: #aaa" ';
+    } else {
+        $css = '';
+    }
+
+    echo'
+          <td>
+            <textarea '. $css. 'name="category['. $category['categories_public_id']. '][categories_title_main]">'. htmlspecialchars($category['categories_title_main']). '</textarea>
+          </td>
+          <td>
+            <textarea '. $css. 'name="category['. $category['categories_public_id']. '][categories_subtitle_main]">'. htmlspecialchars($category['categories_subtitle_main']). '</textarea>
+          </td>
+          <td>
+            <textarea '. $css. 'name="category['. $category['categories_public_id']. '][categories_solution_main]">'. htmlspecialchars($category['categories_solution_main']). '</textarea>
+          </td>
+          <td>
+            <input '. $css. 'name="category['. $category['categories_public_id']. '][sort_order]" size="3" value="'. htmlspecialchars($category['sort_order']). '">
+          </td>
+          <td>
+            <input type="checkbox" name="category['. $category['categories_public_id']. '][is_hidden]" '. ($category['is_hidden']? '': 'checked=true'). '">'. $action_remove. '
+          </td>
+    ';
+}
+echo '</tr>';
+echo '</table>';
+echo '<input type="submit" value="Submit Changes">';
+echo '<input type="submit" value="Add Category">';
+echo '</div>';
+echo '</form>';
+
+
+
+include(__DIR__ . '/../includes/footer.phtml');

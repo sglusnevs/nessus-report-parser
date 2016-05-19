@@ -96,7 +96,7 @@ class Classifier {
 
             if (preg_match($rule_preg, $vulnerability)) {
 
-                $rule_data[5] = $order;
+                $rule_data[5] = $order * 10;
 
                 /*
                 if (preg_match('/public/', $vulnerability)) {

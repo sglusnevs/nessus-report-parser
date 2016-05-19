@@ -87,3 +87,23 @@ $app->post('/changeVulnCategory', function() use($app, $reportData)
     $app->redirect('/changeVulnCategory?result='. $categories_public_id.'&plugin='.$plugin);
 
 });
+
+$app->get('/changeCategory', function() use($app, $reportData)
+{
+    // sgl
+    $app->render('menus/changeCategory.phtml', array('app' => $app, 'categories' => $reportData->getAllCategories(), 'vulnerabilities' => $reportData->getAllVulnerabilities($_SESSION['userId'])));
+});
+
+$app->post('/changeCategory', function() use($app, $reportData)
+{
+    // sgl
+    $categories_public_id = strip_tags($app->request()->post('categories_public_id'));
+
+    echo '<pre>'; print_r($app->request()->post()); exit;
+    $plugin = strip_tags($app->request()->post('plugin'));
+    $remove = strip_tags($app->request()->post('remove'));
+
+    $reportData->addVulnCategoryChange($plugin, $categories_public_id);
+    $app->redirect('/changeCategory?result='. $categories_public_id.'&plugin='.$plugin);
+
+});

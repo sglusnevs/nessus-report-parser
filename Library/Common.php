@@ -88,3 +88,30 @@ function ip2longUnpad($ip) {
 
     return ip2long(ipUnpad($ip));
 }
+
+
+////
+//  Conerts named severity into style
+// 
+function severity2style($severity) {
+
+    $color = '';
+
+    switch ($severity) {
+
+        case 'info': $color = 'blue'; break;
+        case 'low': $color = 'green'; break;
+        case 'medium': $color = 'orange'; break;
+        case 'high': 
+        case 'critical': $color = 'red'; break;
+    }
+
+    if ($color) {
+
+        return ' style="color:'. $color. '" ';
+
+    } else {
+
+        return '';
+    }
+}

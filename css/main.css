@@ -410,3 +410,24 @@ nav > ul > li > div ul > li:hover > a {
     background-color: rgba( 255, 255, 255, 0.1);
 }
 
+textarea {
+    width: 320px; 
+    height: 80px;
+    margin:0;
+}
+table {
+    border-collapse: collapse;
+}
+
+table.categories {
+    align: center;
+    border: none;
+    margin: 8px 22px 8px 22px;
+    border-collapse: collapse;
+    width: 1150px;
+    margin-top: 10px;
+}
+
+table.categories td {
+    border: none;
+}
