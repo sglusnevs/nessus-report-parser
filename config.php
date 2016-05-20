@@ -12,7 +12,7 @@ return array(
     'db' => array(
         'hostname'  =>  'localhost',
         'database'  =>  'reports',
-        'username'  =>  'reports',
-        'password'  =>  'password'
+        'username'  =>  'root',
+        'password'  =>  ''
     )
 );
