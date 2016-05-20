@@ -15,15 +15,15 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+--
+-- Table structure for table `categories`
+--
+
 drop database if exists reports;
 
 create database reports;
 
 use reports;
-
---
--- Table structure for table `categories`
---
 
 DROP TABLE IF EXISTS `categories`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -36,9 +36,11 @@ CREATE TABLE `categories` (
   `categories_subtitle_main` varchar(255) DEFAULT NULL,
   `categories_solution_main` varchar(255) DEFAULT NULL,
   `sort_order` int(11) DEFAULT NULL,
+  `is_auto_added` tinyint(1) NOT NULL DEFAULT '1',
+  `is_hidden` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`categories_id`),
   UNIQUE KEY `categories_public_id` (`categories_public_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=548127 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -58,7 +60,7 @@ CREATE TABLE `host_vuln_link` (
   `service` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `report_id` (`report_id`,`plugin_id`,`host_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1951744 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,7 +82,7 @@ CREATE TABLE `hosts` (
   `mac_address` varchar(255) DEFAULT NULL,
   `credentialed_scan` char(7) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7441 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8569 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +97,7 @@ CREATE TABLE `ignored` (
   `user_id` int(11) DEFAULT NULL,
   KEY `plugin_id` (`plugin_id`,`user_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -108,12 +110,13 @@ DROP TABLE IF EXISTS `reports`;
 CREATE TABLE `reports` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `report_name` varchar(255) DEFAULT NULL,
+  `report_filename` varchar(255) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `total_hosts` int(11) DEFAULT NULL,
   `completed_hosts` int(11) DEFAULT NULL,
   `userId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=112 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,8 +132,40 @@ CREATE TABLE `severities` (
   `severity` tinyint(2) DEFAULT NULL,
   KEY `plugin_id` (`plugin_id`,`user_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL DEFAULT '',
+  `password` varchar(255) NOT NULL DEFAULT '',
+  `privilege` int(11) NOT NULL DEFAULT '0',
+  `name` varchar(255) DEFAULT NULL,
+  `pass_length` int(11) DEFAULT NULL,
+  `last_updated` datetime DEFAULT NULL,
+  `severity` float DEFAULT '4',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'adminstvo','3caf84e8248c5d086862d40bb2c37fe3578930cc763f036ca0fd1a84f61cec2651ae431ea8495f8984224b3dc62e463ec00a4fc259de49e47d60bcaa34652133',0,'Default Admin',8,'2014-06-13 23:56:24',4.4);
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 --
 -- Table structure for table `vulnerabilities`
@@ -159,8 +194,7 @@ CREATE TABLE `vulnerabilities` (
   KEY `vulnerability` (`vulnerability`),
   KEY `pluginID` (`pluginID`,`severity`),
   KEY `categories_public_id` (`categories_public_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=90543 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -172,43 +206,4 @@ CREATE TABLE `vulnerabilities` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL DEFAULT '',
-  `password` varchar(255) NOT NULL DEFAULT '',
-  `privilege` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(255) DEFAULT NULL,
-  `pass_length` int(11) DEFAULT NULL,
-  `last_updated` datetime DEFAULT NULL,
-  `severity` float DEFAULT '4',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `users`
---
-
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'adminstvo','3caf84e8248c5d086862d40bb2c37fe3578930cc763f036ca0fd1a84f61cec2651ae431ea8495f8984224b3dc62e463ec00a4fc259de49e47d60bcaa34652133',0,'Default Admin',8,'2014-06-13 23:56:24',4.4);
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2016-04-29 15:07:09
+-- Dump completed on 2016-05-20 12:31:25
