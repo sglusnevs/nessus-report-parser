@@ -3,9 +3,7 @@ nessus-parser
 
 This tool is a fork of the Nessus Report Parser by Simon Beattie (https://github.com/simonbt/nessus-report-parser)
 
-The problem with the original parser is that reports produced in large environments can be too big to be presented to the customer.
-
-This version of parser adds custom messages customization (based on regular expressions) to classify vulnerabilities found. 
+My version of parser adds custom messages customization (based on regular expressions) to classify vulnerabilities found. 
 
 It allows to create reports that present meaningful, shorter reports instead of a huge detailed pdf documents.
 
