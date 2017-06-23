@@ -1,13 +1,13 @@
 nessus-parser
 ====================
 
-This tool is based on the Nessus Report Parser by Simon Beattie (https://github.com/simonbt/nessus-report-parser)
+This tool is a fork of the Nessus Report Parser by Simon Beattie (https://github.com/simonbt/nessus-report-parser)
 
-I attempted to modify original version to process Nessus reports, collected from larger environments.
+The problem with the original parser is that reports produced in large environments can be too big to be presented to the customer.
 
-In case if you experience problems trying to import large .nessus files, make sure you have enough RAM -- Python script performing import is pretty resource-intensive.
+This version of parser adds custom messages customization (based on regular expressions) to classify vulnerabilities found. 
 
-I recommend a decent VM with at least of couble Gigabytes of RAM.
+It allows to create reports that present meaningful, shorter reports instead of a huge detailed pdf documents.
 
 REQUIREMENTS:
 
@@ -30,7 +30,7 @@ INSTALLATION:
 
     Clone the repository:
 
-    # git clone https://<USERNAME>@bitbucket.org/seveal/nessus-report-parser.git
+    # git clone https://github.com/sglusnevs/nessus-report-parser-bulk
 
     # cd /var/www/html/nessus-report-parser
 
@@ -103,7 +103,7 @@ UPDATING:
 
 
 
-NEW REPORTS:
+CREATING NEW REPORTS:
 
         1. Add Nessus reports to drop-down in
 
@@ -116,4 +116,10 @@ NEW REPORTS:
           3. Add SQL in Library/ReportData.php
 
           3. Add render into views/reports/<my_report>.phtml
+
+KNOWN PROBLEMS:
+
+In case if you experience problems trying to import large .nessus files, make sure you have enough RAM -- Python script performing import is pretty resource-intensive.
+
+I recommend a decent VM with at least of couble Gigabytes of RAM.
 
